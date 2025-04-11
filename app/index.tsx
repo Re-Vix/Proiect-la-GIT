@@ -1,16 +1,14 @@
-import { Text, View } from "react-native";
+import { Text, View, Button } from "react-native";
+import { router } from "expo-router";
+
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text className="text-red-600">Edit app/index.tsx to edit this screen.</Text>     
+    <View>
+
+      <Button title="Go to Home" onPress={() => router.push("/(tabs)/main")} />
+
     </View>
-    
+
   );
 }
