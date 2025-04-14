@@ -1,6 +1,7 @@
-import { Client, Account, ID, OAuthProvider } from 'react-native-appwrite';
+import { Client, Account, ID, OAuthProvider, Alert } from 'react-native-appwrite';
 import * as Linking from 'expo-linking'
 import {openAuthSessionAsync} from 'expo-web-browser'
+import { router } from 'expo-router';
 
 const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
@@ -48,3 +49,12 @@ export async function getUser() {
         return null
     }
 }
+
+export async function handleSignInGoogle()  {
+    const result = await login()
+    if(result) {
+      router.push('/(tabs)/main')
+    } else{
+      Alert.alert("Error")
+    }
+  }
