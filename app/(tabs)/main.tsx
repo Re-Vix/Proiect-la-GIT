@@ -21,8 +21,8 @@ const main = () => {
   return (
     <View>
       <Text>main</Text>
-      <TouchableOpacity onPress={handleLogout}>
-        <Text>Logout</Text>
+      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 ' onPress={handleLogout}>
+        <Text className='text-white'>Logout</Text>
       </TouchableOpacity>
     </View>
   )

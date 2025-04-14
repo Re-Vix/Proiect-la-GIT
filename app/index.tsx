@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useAppwriteContext } from "@/backend/appwriteContextProvider";
 import { login, account } from "@/backend/appwrite";
 import { Link } from "expo-router";
+import { handleSignInGoogle } from "@/backend/appwrite";
 
 
 export default function Index() {
@@ -11,15 +12,6 @@ export default function Index() {
 
 
   if(!loading && isLoggedIn) return router.replace('/(tabs)/main')
-
-  const handleSignInGoogle = async () => {
-    const result = await login()
-    if(result) {
-      router.push('/(tabs)/main')
-    } else{
-      Alert.alert("Error")
-    }
-  }
 
   return (
     <View className="flex flex-col gap-4">
