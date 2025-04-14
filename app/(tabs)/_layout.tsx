@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { Text } from "react-native"
-
-
+import { getMangas } from "@/backend/useAnilistAPI"
+ 
 export default function TabsLayout() {
     return (
         <Tabs
@@ -22,7 +22,7 @@ export default function TabsLayout() {
                     tabBarIcon: ({ focused, color }) => (
                         <Ionicons name="home"
                             size={24}
-                            color={focused ? "#EF5A5A" : "#cecece"}
+                            color={focused ? "#278ADB" : "#303A42"}
                         />
                     ),
                     tabBarLabel: ({ focused }) => (
@@ -39,7 +39,7 @@ export default function TabsLayout() {
                     tabBarIcon: ({ focused, color }) => (
                         <Ionicons name="earth"
                             size={24}
-                            color={focused ? "#EF5A5A" : "#cecece"}
+                            color={focused ? "#278ADB" : "#303A42"}
                         />
                     ),
                     tabBarLabel: ({ focused }) => (
@@ -56,7 +56,7 @@ export default function TabsLayout() {
                     tabBarIcon: ({ focused, color }) => (
                         <Ionicons name="time-outline"
                             size={24}
-                            color={focused ? "#EF5A5A" : "#cecece"}
+                            color={focused ? "#278ADB" : "#303A42"}
                         />
                     ),
                     tabBarLabel: ({ focused }) => (
@@ -73,7 +73,7 @@ export default function TabsLayout() {
                     tabBarIcon: ({ focused, color }) => (
                         <Ionicons name={focused ? "heart" : "heart-outline"}
                             size={24}
-                            color={focused ? "#EF5A5A" : "#cecece"}
+                            color={focused ? "#278ADB" : "#303A42"}
                         />
                     ),
                     tabBarLabel: ({ focused }) => (
