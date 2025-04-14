@@ -1,12 +1,13 @@
 import { Text, View, Button, Alert } from "react-native";
 import { router } from "expo-router";
 import { useAppwriteContext } from "@/backend/appwriteContextProvider";
-import { login } from "@/backend/appwrite";
+import { login, account } from "@/backend/appwrite";
 
 
 export default function Index() {
-
+  account.deleteSession("current")
   const {loading, isLoggedIn} = useAppwriteContext();
+
 
   if(!loading && isLoggedIn) return router.replace('/(tabs)/main')
 
