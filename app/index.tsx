@@ -13,7 +13,7 @@ export default function Index() {
   const handleSignInGoogle = async () => {
     const result = await login()
     if(result) {
-      router.replace('/(tabs)/main')
+      router.push('/(tabs)/main')
     } else{
       Alert.alert("Error")
     }
