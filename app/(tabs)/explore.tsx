@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native'
 import { getQueryAndVariables } from '@/backend/useAnilistAPI'
 import { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
 
 const mangasPerPage = 8;
@@ -13,6 +14,8 @@ export default function explore() {
   const [search, setSearch] = useState("")
   const [genre, setGenre] = useState("")
   const [hasNextPage, setHasNextPage] = useState(true)
+  const route = useRoute()
+  const searchQuery = route.params || ""
 
   const getMangasFromAPI = async () => {
     const { query, variables } = await getQueryAndVariables(page, mangasPerPage, search, genre);
