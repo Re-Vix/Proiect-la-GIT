@@ -17,20 +17,18 @@ interface AppWriteContextType {
 
 const AppwriteContext = createContext<AppWriteContextType | undefined>(undefined);
 
-export const AppwriteContextProvider = ({children} : {children: React.ReactNode}) => {
-  
-    const {data: user, loading, error, refetch} = useAppwrite({fn: getUser})
+export const AppwriteContextProvider = ({ children }: { children: React.ReactNode }) => {
+    const { data: user, loading, error, refetch } = useAppwrite({ fn: getUser });  // Va scoate utilizatorul logat
 
     const isLoggedIn = !!user;
     // !null => !true => false
-    // !{name: "John"} => !false = true
-    
+    // !{name: "John"} => !false => true
+
     return (
-        <AppwriteContext.Provider value={{user, isLoggedIn, loading, refetch}}>
+        <AppwriteContext.Provider value={{ user, isLoggedIn, loading, refetch }}>
             {children}
         </AppwriteContext.Provider>
     )
-
 }
 
 export const useAppwriteContext = () => {
