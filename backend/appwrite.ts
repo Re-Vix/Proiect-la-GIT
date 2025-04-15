@@ -3,7 +3,7 @@ import * as Linking from 'expo-linking'
 import {openAuthSessionAsync} from 'expo-web-browser'
 import { router } from 'expo-router';
 
-const client = new Client()
+export const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
     .setProject('67f94b4500302fe61dde')
     .setPlatform('com.mangapp');
