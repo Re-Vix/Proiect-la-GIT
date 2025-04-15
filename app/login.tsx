@@ -50,7 +50,7 @@ const login = () => {
         <View className='bg-[#A2B2FC] w-full h-[50vh] rounded-t-[24px] absolute bottom-0 flex items-center gap-6'>
         <View className="w-[90%] mt-24">
         <TextInput 
-            className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white placeholder:text-white text-[18px]" 
+            className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white text-[18px]" 
             placeholder="Email..." 
             value={email} 
             onChangeText={setEmail}
@@ -59,7 +59,7 @@ const login = () => {
           
         <View className="w-[90%]">
         <TextInput 
-            className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white placeholder:text-white text-[18px]" 
+            className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white  text-[18px]" 
             placeholder="Password..." 
             secureTextEntry={!showPassword}
             value={password} 

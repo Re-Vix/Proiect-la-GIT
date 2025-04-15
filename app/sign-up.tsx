@@ -86,7 +86,7 @@ const SignUp = () => {
 
     <View className="relative w-[90%] mt-24">
     <TextInput 
-        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white placeholder:text-white text-[18px]" 
+        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white  text-[18px]" 
         placeholder="Username..." 
         value={name} 
         onChangeText={setName}
@@ -101,7 +101,7 @@ const SignUp = () => {
       
     <View className="relative w-[90%]">
     <TextInput 
-        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white placeholder:text-white text-[18px]" 
+        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white  text-[18px]" 
         placeholder="Email..." 
         value={email} 
         onChangeText={setEmail}
@@ -115,7 +115,7 @@ const SignUp = () => {
       
     <View className="relative w-[90%]">
     <TextInput 
-        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white placeholder:text-white text-[18px]" 
+        className="border-b-2 border-white rounded-md px-4 py-5 w-full text-white  text-[18px]" 
         placeholder="Password..." 
         secureTextEntry={!showPassword}
         value={password} 

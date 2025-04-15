@@ -8,8 +8,6 @@ import { handleSignInGoogle } from "@/backend/appwrite";
 
 export default function Index() {
   const {loading, isLoggedIn} = useAppwriteContext();
-
-
   if(!loading && isLoggedIn) return router.replace('/(tabs)/main')
 
   return (
@@ -23,7 +21,7 @@ export default function Index() {
       <TouchableOpacity className='bg-blue-500 px-7 py-4 w-full'>
         <Link href={'/login'}><Text className='text-white text-xl text-center'>Login</Text></Link>
       </TouchableOpacity>
-
+        
     </View>
 
   );

@@ -1,29 +1,25 @@
-import { View, Text, Alert, TouchableOpacity } from 'react-native'
-import { account } from '@/backend/appwrite'
-import { router } from 'expo-router'
-
+import { View, Text, Alert, TouchableOpacity, Image } from 'react-native'
+import { Avatars } from 'react-native-appwrite'
+import { client } from '@/backend/appwrite'
+import { useEffect, useState } from 'react'
+import { Link } from 'expo-router'
 
 const main = () => {
 
-  const handleLogout = async () => {
-    try {
-      const response = await account.deleteSession('current')
-      console.log(response);
-      Alert.alert("Success", "You have logged out!");
-      if(response) {
-        router.replace('/')
-      }
-    } catch (error: any) {
-      console.error(error);
-      Alert.alert("Error", error.message);
-    }
-  }
+  const [avatarURI, setAvatarURI] = useState("")
+
+useEffect(() => {
+  const avatars = new Avatars(client);
+  const result = avatars.getInitials();
+  setAvatarURI(result.toString())
+}, [])
+ 
   return (
     <View>
       <Text>main</Text>
-      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 ' onPress={handleLogout}>
-        <Text className='text-white'>Logout</Text>
-      </TouchableOpacity>
+  <Link href={'/user'}>
+    <Image className='w-8 h-8 rounded-full' source={{ uri: avatarURI }} />
+  </Link>
     </View>
   )
 }
