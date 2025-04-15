@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { Text } from "react-native"
-import { getMangas } from "@/backend/useAnilistAPI"
  
 export default function TabsLayout() {
     return (
