@@ -7,7 +7,6 @@ import { handleSignInGoogle } from "@/backend/appwrite";
 
 
 export default function Index() {
-  account.deleteSession("current")
   const {loading, isLoggedIn} = useAppwriteContext();
 
 

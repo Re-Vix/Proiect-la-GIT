@@ -44,7 +44,7 @@ export default function TabsLayout() {
                     ),
                     tabBarLabel: ({ focused }) => (
                         <Text className={`text-sm text-${focused ? "black" : "gray-400"}`}>
-                            Favorites
+                            Explore
                         </Text>
                     )
                 }} />
@@ -61,7 +61,7 @@ export default function TabsLayout() {
                     ),
                     tabBarLabel: ({ focused }) => (
                         <Text className={`text-sm text-${focused ? "black" : "gray-400"}`}>
-                            Favorites
+                            History
                         </Text>
                     )
                 }} />

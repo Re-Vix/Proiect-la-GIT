@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 
-export async function getMangas(page: number = 1, perPage: number = 10, search: string = "", genre: string = "") {
-var query = `
+export async function getQueryAndVariables(page: number = 1, perPage: number = 10, search: string = "", genre: string = "") {
+  var query = `
 query ($id: Int, $page: Int, $perPage: Int, $search: String, $genre: String) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
@@ -36,41 +36,14 @@ query ($id: Int, $page: Int, $perPage: Int, $search: String, $genre: String) {
 
 `;
 
-var variables = {
+  var variables = {
     page: page,
-    perPage: perPage, 
+    perPage: perPage,
     search: search != "" ? search : null,
     genre: genre != "" ? genre : null
-};
+  };
 
-const [mangas, setMangas] = useState<any>();
-
-const fetchData = async () => {
-    try {
-        await fetch('https://graphql.anilist.co', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: variables
-            })}).then(response => response.json())
-        .then(data => {
-            setMangas(JSON.stringify(data.data.Page.media));
-        }
-        );
-    
-    
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-fetchData();
-
-return mangas
+  return { query, variables };
 
 }
 
