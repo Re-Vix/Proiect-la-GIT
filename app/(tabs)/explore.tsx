@@ -3,9 +3,9 @@ import { getQueryAndVariables } from '@/backend/useAnilistAPI'
 import { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import { router } from 'expo-router';
 
-
-const mangasPerPage = 8;
+const mangasPerPage = 12;
 
 export default function explore() {
 
@@ -73,26 +73,31 @@ export default function explore() {
         <TextInput placeholder='Search...' className='flex-1 ml-2 text-gray-700' onChangeText={handleSearch} value={search} />
       </View>
 
-      <ScrollView>
-        {
-          mangas.map((manga: any, index: number) => (
-            <View key={index} className='mt-2'>
-              <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
-              <Text>{manga.title.romaji}</Text>
-            </View>
-          ))
-        }
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className='flex-row flex-wrap justify-between'>
+          {
+            mangas.map((manga: any, index: number) => (
+              <TouchableOpacity key={index} className='mt-4 flex-col gap-2 w-[48%] px-3 py-5 bg-white rounded-lg shadow-md' onPress={() => { router.push("/main") }}>
+                <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
+                <View className='flex-col gap-1'>
+                  <Text className='font-bold text-xl' numberOfLines={1}>{manga.title.english ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                  <Text className={`text-sm text-gray-400 ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.english ? manga.title.romaji : (manga.title.romaji ? manga.title.native : "")}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          }
+        </View>
       </ScrollView>
 
-      <View className={'flex-row items-center justify-between w-full '}>
+      <View className={'flex-row items-center justify-between w-full mt-5 px-4'}>
         <TouchableOpacity onPress={() => { if (page > 1) setPage(page - 1) }}>
-          <Ionicons name='arrow-back' size={16}/>
+          <Ionicons name='arrow-back' size={18} />
         </TouchableOpacity>
 
-        <Text>Page: {page}</Text>
+        <Text className='font-bold text-xl'>Page: {page}</Text>
 
         <TouchableOpacity onPress={() => { if (hasNextPage) setPage(page + 1) }}>
-          <Ionicons name='arrow-forward' size={16}/>
+          <Ionicons name='arrow-forward' size={18} />
         </TouchableOpacity>
       </View>
     </View>
