@@ -11,7 +11,7 @@ query ($id: Int, $page: Int, $perPage: Int, $search: String, $genre: String) {
       perPage
       total
     }
-    media(id: $id, type: MANGA, search: $search, genre: $genre, sort: ${sort + (order === "DESC" ? "_DESC" : "")}) {
+    media(id: $id, type: MANGA, search: $search, genre: $genre, sort: ${sort + (order === "DESC" ? "_DESC" : "")}, isAdult: false) {
       id
       title {
         english

@@ -5,7 +5,7 @@ import { AppwriteContextProvider } from "@/backend/appwriteContextProvider";
 export default function RootLayout() {
   return (
     <AppwriteContextProvider>
-      <Stack screenOptions={{headerShown: false}}/>;
+      <Stack screenOptions={{headerShown: false}}/>
     </AppwriteContextProvider>
   )
 }
