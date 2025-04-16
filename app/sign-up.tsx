@@ -75,7 +75,7 @@ const SignUp = () => {
                 <Text className='text-[#9D9D9D] text-[18px] text-center'>Sign in to start</Text>
             </View>
             <View className='mt-24 flex items-center justify-center'>
-                <TouchableOpacity className='rounded-full border-gray-200 border flex flex-row gap-4 items-center justify-center px-6 py-3'>
+                <TouchableOpacity onPress={handleSignInGoogle} className='rounded-full border-gray-200 border flex flex-row gap-4 items-center justify-center px-6 py-3'>
                     <Image source={{uri:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png'}} className='w-[24px] h-[24px]'/>
                     <Text className='text-[18px]'>Continue with Google</Text>
                 </TouchableOpacity>

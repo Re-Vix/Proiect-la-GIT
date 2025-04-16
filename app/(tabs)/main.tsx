@@ -7,18 +7,19 @@ import { account } from '@/backend/appwrite'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { getQueryAndVariables } from '@/backend/useAnilistAPI'
+import { router } from 'expo-router'
 
 const main = () => {
 
   const [avatarURI, setAvatarURI] = useState("")
-
-useEffect(() => {
-  const avatars = new Avatars(client);
-  const result = avatars.getInitials();
-  setAvatarURI(result.toString())
-}, [])
-
   const [accountName, setAccountName] = useState("");
+
+  useEffect(() => {
+    const avatars = new Avatars(client);
+    const result = avatars.getInitials(accountName);
+    setAvatarURI(result.toString())
+  }, [accountName])
+
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -89,14 +90,17 @@ useEffect(() => {
         </View>
         <Text className='text-[20px]'>Trending Mangas</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {
-        mangas.map((manga: any, index: number) => (
-          <View key={index} className='mt-2'>
-            <Text>{manga.title.english}</Text>
-            <Image className='w-[200px] h-[200px]' source={{uri: manga.coverImage.extraLarge}}/>
-          </View>
-        ))
-      }
+          {
+            mangas.map((manga: any, index: number) => (
+              <TouchableOpacity key={index} className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mr-4' onPress={() => { router.push("/main") }}>
+                <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
+                <View className='flex-col gap-1'>
+                  <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{manga.title.english ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                  <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.english ? manga.title.romaji : (manga.title.romaji ? manga.title.native : "")}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          }
         </ScrollView>
     </View>
   )

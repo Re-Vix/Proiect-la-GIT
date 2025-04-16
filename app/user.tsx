@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, Image, TextInput } from 'react-native'
 import { account } from '@/backend/appwrite'
 import { useState, useEffect } from 'react'
 import { router } from 'expo-router'
@@ -22,13 +22,13 @@ const user = () => {
     fetchAccount();
   }, []);
 
-    const [avatarURI, setAvatarURI] = useState("")
+    const [avatarURI, setAvatarURI] = useState<any>()
   
   useEffect(() => {
     const avatars = new Avatars(client);
-    const result = avatars.getInitials();
+    const result = avatars.getInitials(accountName);
     setAvatarURI(result.toString())
-  }, [])
+  }, [accountName])
 
   const handleLogout = async () => {
       try {
@@ -43,6 +43,22 @@ const user = () => {
         Alert.alert("Error", error.message);
       }
     }
+    
+    const [isEditing, setIsEditing] = useState(false)
+    const [newName, setNewName] = useState("")
+
+  const handleUpdateName = async () => {
+    try {
+      const response = await account.updateName(newName)
+      Alert.alert("Success", "You have successfully updated your name!");
+      if(response) {
+        router.replace('/user')
+      }
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert("Error", error.message);
+    }
+  }
 
   return (
     <View>
@@ -52,9 +68,33 @@ const user = () => {
         <Text></Text>
       </View>
       <View className='flex flex-row gap-8 items-center px-2'>
-        <Image className='w-24 h-24 rounded-full' source={{ uri: avatarURI }} />
+        <Image className='w-24 h-24 rounded-full' source={{uri: avatarURI}} />
         <View className='flex flex-col'>
-            <Text className='font-semibold text-[24px]'>{accountName}</Text>
+          <View>
+          {isEditing ? (
+        <View className="flex-row items-center gap-2">
+          <TextInput
+            value={newName}
+            onChangeText={setNewName}
+            placeholder="Enter name..."
+            className="w-[140px] border px-3 py-2 rounded flex-1"
+          />
+          <TouchableOpacity onPress={handleUpdateName}>
+            <Ionicons name="checkmark-outline" size={24} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setNewName(accountName); setIsEditing(false); }}>
+            <Ionicons name="close-outline" size={24} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View className="flex-row items-center gap-2">
+          <Text className="font-semibold text-[24px]">{accountName}</Text>
+          <TouchableOpacity onPress={() => {setNewName(accountName); setIsEditing(true);}}>
+            <Ionicons name="create-outline" size={24} />
+          </TouchableOpacity>
+        </View>
+      )}
+          </View>
             <Text className='text-gray-500'>{accountEmail}</Text>
         </View>
       </View>
