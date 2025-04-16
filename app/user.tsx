@@ -26,7 +26,7 @@ const user = () => {
   
   useEffect(() => {
     const avatars = new Avatars(client);
-    const result = avatars.getInitials('Iovu Stefan');
+    const result = avatars.getInitials();
     setAvatarURI(result.toString())
   }, [])
 
