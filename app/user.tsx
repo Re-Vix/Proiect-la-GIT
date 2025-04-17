@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native'
 
 const user = () => {
 
+
   const languageOptions = [
     { label: 'English', value: 'English' },
     { label: 'Romanji', value: 'Romanji' }
@@ -35,7 +36,7 @@ const user = () => {
     fetchAccount();
   }, []);
 
-    const [avatarURI, setAvatarURI] = useState<any>()
+  const [avatarURI, setAvatarURI] = useState<any>()
   
   useEffect(() => {
     const avatars = new Avatars(client);
@@ -74,7 +75,6 @@ const user = () => {
   }
 
 
-
   useEffect(() => {
 
     const fetchUserData = async () => {
@@ -92,6 +92,17 @@ const user = () => {
     fetchUserData();
   }, [])
 
+  useEffect(() => {
+    if (userDatas && userDatas.length > 0) {
+      const getCurrentUserLanguagePreference = () => {
+        const currentUserData = userDatas.find(user => user.UserID === accountId);
+        setLanguage(currentUserData?.LanguagePreference || null);
+      };
+  
+      getCurrentUserLanguagePreference();
+    }
+  }, [userDatas]);
+
   const checkExistsUserData = async () => {
     if (userDatas && userDatas.length > 0) {
       const existing = userDatas.find(userData => userData.UserID?.toString().trim() === accountId?.toString().trim());
@@ -99,8 +110,6 @@ const user = () => {
     }
     return null;
   };
-
-  const navigation = useNavigation()
 
   const createOrUpdateUserData = async () => {
     try {
@@ -123,7 +132,7 @@ const user = () => {
           userDataCollection,
           ID.unique(),
           {
-            LastViewedID: '999',
+            LastViewedID: '',
             LanguagePreference: language,
             UserID: accountId
           }

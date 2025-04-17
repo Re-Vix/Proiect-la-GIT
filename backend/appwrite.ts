@@ -3,6 +3,7 @@ import * as Linking from 'expo-linking'
 import {openAuthSessionAsync} from 'expo-web-browser'
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
+import { useState } from 'react';
 
 export const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')

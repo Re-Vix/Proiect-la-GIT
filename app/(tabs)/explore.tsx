@@ -1,10 +1,11 @@
-import { View, Text, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, Image, ScrollView, Alert } from 'react-native'
 import { getQueryAndVariables } from '@/backend/useAnilistAPI'
 import { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { Dropdown } from "react-native-element-dropdown"
+import { database, databaseId, userDataCollection, account } from '@/backend/appwrite';
 
 const mangasPerPage = 12;
 const genres = [
@@ -38,6 +39,9 @@ export default function explore() {
   const [genre, setGenre] = useState("")
   const [hasNextPage, setHasNextPage] = useState(false)
   const [nrOfMangas, setNrOfMangas] = useState(0)
+  const [userDatas, setUserDatas] = useState([])
+  const [language, setLanguage] = useState("")
+  const [accountId, setAccountId] = useState("")
 
   const route = useRoute()
   const { searchQuery } = route.params || ""
@@ -96,6 +100,42 @@ export default function explore() {
     getMangasFromAPI(search, genre)
   }
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try{
+            const response = await database.listDocuments(databaseId, userDataCollection)
+            if (response) {
+              setUserDatas(response.documents)
+            }
+          } catch(e:any) {
+            console.error(e)
+            Alert.alert("Error", e.message);
+          }
+        } 
+    
+        fetchUserData();
+      }, [])
+  
+      useEffect(() => {
+        if (userDatas && userDatas.length > 0) {
+          const getCurrentUserLanguagePreference = () => {
+            const currentUserData = userDatas.find(user => user.UserID === accountId);
+            setLanguage(currentUserData?.LanguagePreference || null);
+          };
+      
+          getCurrentUserLanguagePreference();
+        }
+      }, [userDatas]);
+
+        useEffect(() => {
+          const fetchAccount = async () => {
+              const user = await account.get();
+              setAccountId(user.$id); 
+          };
+      
+          fetchAccount();
+        }, []);
+
   return (
     <View className='flex-1 px-4 my-4'>
       <View className='flex-row items-center gap-2 bg-gray-100 px-6 py-2 w-full sticky border rounded-full mx-auto'>
@@ -148,8 +188,8 @@ export default function explore() {
               <TouchableOpacity key={index} className='mt-4 flex-col gap-2 w-[48%] px-3 py-5 bg-white rounded-lg shadow-md' onPress={() => { router.push(`/manga/${manga.id}`) }}>
                 <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
                 <View className='flex-col gap-1'>
-                  <Text className='font-bold text-xl' numberOfLines={1}>{manga.title.english ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
-                  <Text className={`text-sm text-gray-400 ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.english ? manga.title.romaji : (manga.title.romaji ? manga.title.native : "")}</Text>
+                <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
                 </View>
               </TouchableOpacity>
             )) : <Text className='text-center text-4xl font-bold w-full mt-10'>No results found</Text>

@@ -9,6 +9,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { getQueryAndVariables } from '@/backend/useAnilistAPI'
 import { router } from 'expo-router'
 import { database, databaseId, userDataCollection } from '@/backend/appwrite'
+import { ID } from 'react-native-appwrite'
 
 const main = () => {
   const [language, setLanguage] = useState("")
@@ -101,6 +102,7 @@ const main = () => {
       useEffect(() => {
         getMangasFromAPI()
       }, [])
+
  
   return (
     <View>
@@ -133,6 +135,7 @@ const main = () => {
             ))
           }
         </ScrollView>
+        <Text className='text-[20px]'>Recently Viewed</Text>
     </View>
   )
 }
