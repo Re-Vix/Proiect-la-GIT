@@ -50,3 +50,33 @@ query ($id: Int, $page: Int, $perPage: Int, $search: String, $genre: String) {
 }
 
 
+export async function getMangaByIdQueryAndVariables(id: number) {
+  const query = `query ($id: Int) {
+    Media(id: $id, type: MANGA){
+      title {
+        english
+        romaji
+        native
+      }
+      coverImage {
+        extraLarge
+        color
+      }
+      volumes
+      chapters
+      description
+      rankings {
+        id
+      }
+      genres
+      averageScore
+      favourites
+    }
+  }`
+
+  const variables = {
+    id: id
+  }
+
+  return { query, variables };
+}

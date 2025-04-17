@@ -8,14 +8,21 @@ import { Ionicons } from '@expo/vector-icons'
 import { Link } from 'expo-router'
 import { database, databaseId, userDataCollection } from '@/backend/appwrite'
 import { ID } from 'react-native-appwrite'
+import { Dropdown } from 'react-native-element-dropdown'
+import { useNavigation } from '@react-navigation/native'
 
 const user = () => {
+
+  const languageOptions = [
+    { label: 'English', value: 'English' },
+    { label: 'Romanji', value: 'Romanji' }
+  ];
 
   const [accountName, setAccountName] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
   const [accountId, setAccountId] = useState("");
   const [userDatas, setUserDatas] = useState([])
-  const [languagePreference, setLanguagePreference] = useState("")
+  const [language, setLanguage] = useState("English")
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -93,6 +100,8 @@ const user = () => {
     return null;
   };
 
+  const navigation = useNavigation()
+
   const createOrUpdateUserData = async () => {
     try {
       const existingUserData = await checkExistsUserData();
@@ -103,11 +112,11 @@ const user = () => {
           userDataCollection,
           existingUserData.$id,
           {
-            LastViewedID: '000'
+            LanguagePreference: language,
           }
         );
-        Alert.alert("Info", "User data updated!");
-        router.replace('/user')
+        Alert.alert("Info", "Preferred language updated!");
+        router.replace('/main')
       } else {
         const response = await database.createDocument(
           databaseId,
@@ -115,11 +124,12 @@ const user = () => {
           ID.unique(),
           {
             LastViewedID: '999',
+            LanguagePreference: language,
             UserID: accountId
           }
         );
-        Alert.alert("Success", "User data created!");
-        router.replace('/user')
+        Alert.alert("Info", "Preferred language updated!");
+        router.replace('/main')
       }
     } catch (e: any) {
       console.error(e);
@@ -169,8 +179,17 @@ const user = () => {
       <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={handleLogout}>
         <Text className='text-white text-center'>Logout</Text>
       </TouchableOpacity>
+      <Text className='mt-6'>Select Language:</Text>
+      <Dropdown
+        data={languageOptions}
+        labelField="label"
+        valueField="value"
+        value={language}
+        onChange={item => setLanguage(item.value)}
+      />
+      <Text>Selected: {language}</Text>
       <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={createOrUpdateUserData}>
-        <Text className='text-white text-center'>Test</Text>
+        <Text className='text-white text-center'>Save Language Preference</Text>
       </TouchableOpacity>
     </View>
   )

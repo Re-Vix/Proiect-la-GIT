@@ -5,14 +5,44 @@ import { useEffect, useState } from 'react'
 import { Link } from 'expo-router'
 import { account } from '@/backend/appwrite'
 import { Ionicons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { getQueryAndVariables } from '@/backend/useAnilistAPI'
 import { router } from 'expo-router'
+import { database, databaseId, userDataCollection } from '@/backend/appwrite'
 
 const main = () => {
-
+  const [language, setLanguage] = useState("")
   const [avatarURI, setAvatarURI] = useState("")
   const [accountName, setAccountName] = useState("");
+  const [accountId, setAccountId] = useState("");
+  const [userDatas, setUserDatas] = useState([])
+
+  useEffect(() => {
+      const fetchUserData = async () => {
+        try{
+          const response = await database.listDocuments(databaseId, userDataCollection)
+          if (response) {
+            setUserDatas(response.documents)
+          }
+        } catch(e:any) {
+          console.error(e)
+          Alert.alert("Error", e.message);
+        }
+      } 
+  
+      fetchUserData();
+    }, [])
+
+    useEffect(() => {
+      if (userDatas && userDatas.length > 0) {
+        const getCurrentUserLanguagePreference = () => {
+          const currentUserData = userDatas.find(user => user.UserID === accountId);
+          setLanguage(currentUserData?.LanguagePreference || null);
+        };
+    
+        getCurrentUserLanguagePreference();
+      }
+    }, [userDatas]);
 
   useEffect(() => {
     const avatars = new Avatars(client);
@@ -25,6 +55,7 @@ const main = () => {
     const fetchAccount = async () => {
         const user = await account.get();
         setAccountName(user.name); 
+        setAccountId(user.$id); 
     };
 
     fetchAccount();
@@ -95,8 +126,8 @@ const main = () => {
               <TouchableOpacity key={index} className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mr-4' onPress={() => { router.push("/main") }}>
                 <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
                 <View className='flex-col gap-1'>
-                  <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{manga.title.english ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
-                  <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.english ? manga.title.romaji : (manga.title.romaji ? manga.title.native : "")}</Text>
+                  <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                  <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
                 </View>
               </TouchableOpacity>
             ))
