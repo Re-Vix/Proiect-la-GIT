@@ -6,17 +6,23 @@ import { Avatars } from 'react-native-appwrite'
 import { client } from '@/backend/appwrite'
 import { Ionicons } from '@expo/vector-icons'
 import { Link } from 'expo-router'
+import { database, databaseId, userDataCollection } from '@/backend/appwrite'
+import { ID } from 'react-native-appwrite'
 
 const user = () => {
 
   const [accountName, setAccountName] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
+  const [accountId, setAccountId] = useState("");
+  const [userDatas, setUserDatas] = useState([])
+  const [languagePreference, setLanguagePreference] = useState("")
 
   useEffect(() => {
     const fetchAccount = async () => {
         const user = await account.get();
         setAccountName(user.name); 
         setAccountEmail(user.email); 
+        setAccountId(user.$id);
     };
 
     fetchAccount();
@@ -60,10 +66,72 @@ const user = () => {
     }
   }
 
+
+
+  useEffect(() => {
+
+    const fetchUserData = async () => {
+      try{
+        const response = await database.listDocuments(databaseId, userDataCollection)
+        if (response) {
+          setUserDatas(response.documents)
+        }
+      } catch(e:any) {
+        console.error(e)
+        Alert.alert("Error", e.message);
+      }
+    } 
+
+    fetchUserData();
+  }, [])
+
+  const checkExistsUserData = async () => {
+    if (userDatas && userDatas.length > 0) {
+      const existing = userDatas.find(userData => userData.UserID?.toString().trim() === accountId?.toString().trim());
+      return existing || null;
+    }
+    return null;
+  };
+
+  const createOrUpdateUserData = async () => {
+    try {
+      const existingUserData = await checkExistsUserData();
+  
+      if (existingUserData) {
+        const response = await database.updateDocument(
+          databaseId,
+          userDataCollection,
+          existingUserData.$id,
+          {
+            LastViewedID: '000'
+          }
+        );
+        Alert.alert("Info", "User data updated!");
+        router.replace('/user')
+      } else {
+        const response = await database.createDocument(
+          databaseId,
+          userDataCollection,
+          ID.unique(),
+          {
+            LastViewedID: '999',
+            UserID: accountId
+          }
+        );
+        Alert.alert("Success", "User data created!");
+        router.replace('/user')
+      }
+    } catch (e: any) {
+      console.error(e);
+      Alert.alert("Error", e.message);
+    }
+  };
+  
+
   return (
     <View>
       <View className='flex flex-row items-center justify-between px-2 py-3'>
-        <Link href={'/main'}><Ionicons name="arrow-back-outline" size={32}/></Link>
+        <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={32}/></TouchableOpacity>
         <Text className='text-[24px] mr-4'>Profile</Text>
         <Text></Text>
       </View>
@@ -100,6 +168,9 @@ const user = () => {
       </View>
       <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={handleLogout}>
         <Text className='text-white text-center'>Logout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={createOrUpdateUserData}>
+        <Text className='text-white text-center'>Test</Text>
       </TouchableOpacity>
     </View>
   )

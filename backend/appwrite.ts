@@ -1,14 +1,20 @@
-import { Client, Account, ID, OAuthProvider, Alert } from 'react-native-appwrite';
+import { Client, Account, ID, OAuthProvider, Databases } from 'react-native-appwrite';
 import * as Linking from 'expo-linking'
 import {openAuthSessionAsync} from 'expo-web-browser'
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 export const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
     .setProject('67f94b4500302fe61dde')
     .setPlatform('com.mangapp');
 
+export const database = new Databases(client);
 export const account = new Account(client);
+export const databaseId = '68011164001ef8055ba5'
+export const statusCollection = '6801118d001e35c0b735'
+export const favouritesCollection = '6801118200298a068d89'
+export const userDataCollection = '6801117800286b743b23'
 
 export async function login() {
     try {
