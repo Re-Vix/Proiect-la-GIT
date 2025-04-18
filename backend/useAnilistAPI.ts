@@ -22,15 +22,6 @@ query ($id: Int, $page: Int, $perPage: Int, $search: String, $genre: String) {
         extraLarge
         color
       }
-      volumes
-      chapters
-      description
-      rankings {
-        id
-      }
-      genres
-      averageScore
-      favourites
     }
   }
 }
@@ -71,6 +62,7 @@ export async function getMangaByIdQueryAndVariables(id: number) {
       genres
       averageScore
       favourites
+      status
     }
   }`
 

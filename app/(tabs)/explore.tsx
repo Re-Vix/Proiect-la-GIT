@@ -39,7 +39,7 @@ export default function explore() {
   const [genre, setGenre] = useState("")
   const [hasNextPage, setHasNextPage] = useState(false)
   const [nrOfMangas, setNrOfMangas] = useState(0)
-  const [userDatas, setUserDatas] = useState([])
+  const [userDatas, setUserDatas] = useState<any>([])
   const [language, setLanguage] = useState("")
   const [accountId, setAccountId] = useState("")
 
@@ -119,7 +119,7 @@ export default function explore() {
       useEffect(() => {
         if (userDatas && userDatas.length > 0) {
           const getCurrentUserLanguagePreference = () => {
-            const currentUserData = userDatas.find(user => user.UserID === accountId);
+            const currentUserData = userDatas.find((user: any) => user.UserID === accountId);
             setLanguage(currentUserData?.LanguagePreference || null);
           };
       
@@ -188,7 +188,7 @@ export default function explore() {
               <TouchableOpacity key={index} className='mt-4 flex-col gap-2 w-[48%] px-3 py-5 bg-white rounded-lg shadow-md' onPress={() => { router.push(`/manga/${manga.id}`) }}>
                 <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
                 <View className='flex-col gap-1'>
-                <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" && manga.title.english ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
                 <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
                 </View>
               </TouchableOpacity>
