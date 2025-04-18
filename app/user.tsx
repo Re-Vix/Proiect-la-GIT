@@ -144,7 +144,7 @@ const user = () => {
   
 
   return (
-    <View>
+    <View className='p-4'>
       <View className='flex flex-row items-center justify-between px-2 py-3'>
         <TouchableOpacity onPress={() => router.back()}><Ionicons name="arrow-back-outline" size={32}/></TouchableOpacity>
         <Text className='text-[24px] mr-4'>Profile</Text>
@@ -181,7 +181,7 @@ const user = () => {
             <Text className='text-gray-500'>{accountEmail}</Text>
         </View>
       </View>
-      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={handleLogout}>
+      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-full mx-auto mt-8' onPress={handleLogout}>
         <Text className='text-white text-center'>Logout</Text>
       </TouchableOpacity>
       <Text className='mt-6'>Select Language:</Text>
@@ -193,7 +193,7 @@ const user = () => {
         onChange={item => setLanguage(item.value)}
       />
       <Text>Selected: {language}</Text>
-      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-[80%] mx-auto mt-8' onPress={createOrUpdateUserData}>
+      <TouchableOpacity className='bg-blue-500 rounded-full py-3 px-6 w-full mx-auto mt-8' onPress={createOrUpdateUserData}>
         <Text className='text-white text-center'>Save Language Preference</Text>
       </TouchableOpacity>
     </View>
