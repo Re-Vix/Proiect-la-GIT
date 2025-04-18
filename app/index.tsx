@@ -31,7 +31,6 @@ export default function Index() {
   return (
     <View className="flex-1 items-center">
       <Image resizeMode="cover" className="w-full h-[105%] absolute" source={{uri:'https://i.pinimg.com/736x/fa/05/50/fa05508f96befb2ecd988da85b8b9a87.jpg'}}/>
-      <Button title="Go to Home" onPress={() => router.push("/(tabs)/main")} />
         <View className="flex flex-col gap-4 items-center absolute bottom-10">
       <TouchableOpacity onPress={handleSignInGoogle} className='rounded-2xl w-[340px] border-gray-200 bg-white border flex flex-row gap-4 items-center justify-center px-6 py-5'>
                 <Image source={{uri:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png'}} className='w-[24px] h-[24px]'/>
