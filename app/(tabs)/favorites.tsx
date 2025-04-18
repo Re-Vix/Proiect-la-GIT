@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { router } from 'expo-router'
 import { getMangaByIdQueryAndVariables } from '@/backend/useAnilistAPI'
 import { userDataCollection } from '@/backend/appwrite'
+import { Query } from 'react-native-appwrite'
 
 
 const favorites = () => {
@@ -33,6 +34,7 @@ const favorites = () => {
                 const fetchAccount = async () => {
                     const user = await account.get();
                     setAccountId(user.$id); 
+                    fetchFavourites(user.$id);
                 };
             
                 fetchAccount();
@@ -49,20 +51,21 @@ const favorites = () => {
         }
       }, [userDatas]);
 
-  useEffect(() => {
-        const fetchFavourites = async () => {
-          try{
-            const response = await database.listDocuments(databaseId, favouritesCollection)
-            if (response) {
-              setFavourites(response.documents)
-            }
-          } catch(e:any) {
-            console.error(e)
-            Alert.alert("Error", e.message);
+
+
+      const fetchFavourites = async (currentUserId: string) => {
+        try{
+          const response = await database.listDocuments(databaseId, favouritesCollection, [Query.equal("UserID", currentUserId)])
+          if (response) {
+            setFavourites(response.documents)
           }
-        } 
-        fetchFavourites();
-      }, [])
+        } catch(e:any) {
+          console.error(e)
+          Alert.alert("Error", e.message);
+        }
+      } 
+
+
 
     const [favouritesData, setFavouritesData] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -108,7 +111,7 @@ const favorites = () => {
         
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} className='mt-4'>
+    <ScrollView showsVerticalScrollIndicator={false} className='mt-4 p-4'>
             <View className='flex-row flex-wrap justify-between'>
               {
                 favouritesData.length != 0 ? favouritesData.map((manga: any, index: number) => (
