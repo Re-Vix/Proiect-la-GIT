@@ -56,9 +56,6 @@ export async function getMangaByIdQueryAndVariables(id: number) {
       volumes
       chapters
       description
-      rankings {
-        id
-      }
       genres
       averageScore
       favourites
