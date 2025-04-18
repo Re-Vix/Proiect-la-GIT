@@ -23,31 +23,31 @@ const main = () => {
   const [lastViewedId, setLastViewedId] = useState("")
 
   useEffect(() => {
-      const fetchUserData = async () => {
-        try{
-          const response = await database.listDocuments(databaseId, userDataCollection)
-          if (response) {
-            setUserDatas(response.documents)
-          }
-        } catch(e:any) {
-          console.error(e)
-          Alert.alert("Error", e.message);
+    const fetchUserData = async () => {
+      try {
+        const response = await database.listDocuments(databaseId, userDataCollection)
+        if (response) {
+          setUserDatas(response.documents)
         }
-      } 
-  
-      fetchUserData();
-    }, [])
-
-    useEffect(() => {
-      if (userDatas && userDatas.length > 0) {
-        const getCurrentUserLanguagePreference = () => {
-          const currentUserData = userDatas.find(user => user.UserID === accountId);
-          setLanguage(currentUserData?.LanguagePreference || null);
-        };
-    
-        getCurrentUserLanguagePreference();
+      } catch (e: any) {
+        console.error(e)
+        Alert.alert("Error", e.message);
       }
-    }, [userDatas]);
+    }
+
+    fetchUserData();
+  }, [])
+
+  useEffect(() => {
+    if (userDatas && userDatas.length > 0) {
+      const getCurrentUserLanguagePreference = () => {
+        const currentUserData = userDatas.find(user => user.UserID === accountId);
+        setLanguage(currentUserData?.LanguagePreference || null);
+      };
+
+      getCurrentUserLanguagePreference();
+    }
+  }, [userDatas]);
 
   useEffect(() => {
     const avatars = new Avatars(client);
@@ -58,107 +58,108 @@ const main = () => {
 
   useEffect(() => {
     const fetchAccount = async () => {
-        const user = await account.get();
-        setAccountName(user.name); 
-        setAccountId(user.$id); 
+      const user = await account.get();
+      setAccountName(user.name);
+      setAccountId(user.$id);
     };
 
     fetchAccount();
   }, []);
 
   const navigation = useNavigation();
-    const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-    const handleSearch = () => {
-      navigation.navigate('explore', { searchQuery });
-    };
+  const handleSearch = () => {
+    navigation.navigate('explore', { searchQuery });
+  };
 
-      const [mangas, setMangas] = useState<any>([])
-      const [hasNextPage, setHasNextPage] = useState(true)
-    
-      const getMangasFromAPI = async () => {
-        const { query, variables } = await getQueryAndVariables(1, 10);
-        const fetchData = async () => {
-          try {
-            const response = await fetch('https://graphql.anilist.co', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-              },
-              body: JSON.stringify({
-                query: query,
-                variables: variables
-              })
-            }).then(response => response.json());
-    
-            setMangas(response.data.Page.media);
-            setHasNextPage(response.data.Page.pageInfo.hasNextPage)
-    
-          } catch (error) {
-            console.log(error);
-          }
-        }
-    
-        fetchData();
+  const [mangas, setMangas] = useState<any>([])
+  const [hasNextPage, setHasNextPage] = useState(true)
+
+  const getMangasFromAPI = async () => {
+    const { query, variables } = await getQueryAndVariables(1, 10);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            query: query,
+            variables: variables
+          })
+        }).then(response => response.json());
+
+        setMangas(response.data.Page.media);
+        setHasNextPage(response.data.Page.pageInfo.hasNextPage)
+
+      } catch (error) {
+        console.log(error);
       }
-    
-      useEffect(() => {
-        getMangasFromAPI()
-      }, [])
+    }
 
-      useEffect(() => {
-        if (userDatas && userDatas.length > 0) {
-          const getCurrentUserLastViewed = () => {
-            const currentUserData = userDatas.find(user => user.UserID === accountId);
-            setLastViewedId(currentUserData?.LastViewedID || null);
-          };
-      
-          getCurrentUserLastViewed();
+    fetchData();
+  }
+
+  useEffect(() => {
+    getMangasFromAPI()
+  }, [])
+
+  useEffect(() => {
+    if (userDatas && userDatas.length > 0) {
+      const getCurrentUserLastViewed = () => {
+        const currentUserData = userDatas.find(user => user.UserID === accountId);
+        setLastViewedId(currentUserData?.LastViewedID || null);
+      };
+
+      getCurrentUserLastViewed();
+    }
+  }, [userDatas, accountId]);
+
+  const getMangaFromAPI = async (search: string = "", genre: string = "") => {
+    const { query, variables } = await getMangaByIdQueryAndVariables(Number(lastViewedId));
+    // console.log(lastViewedId);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            query: query,
+            variables: variables
+          })
+        }).then(response => response.json());
+        if (response.data) {
+          setManga(response.data.Media);
+          setError(null)
         }
-      }, [userDatas, accountId]);
-
-       const getMangaFromAPI = async (search: string = "", genre: string = "") => {
-          const { query, variables } = await getMangaByIdQueryAndVariables(Number(lastViewedId));
-          const fetchData = async () => {
-            try {
-              const response = await fetch('https://graphql.anilist.co', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                  query: query,
-                  variables: variables
-                })
-              }).then(response => response.json());
-              if (response.data) {
-                setManga(response.data.Media);
-                setError(null)
-              }
-              else {
-                setError("Error: Manga not found")
-                setManga(null)
-              }
-            } catch (error) {
-              console.log(error);
-              setManga(null)
-              setError(error)
-            }
-          }
-          fetchData();
+        else {
+          setError("Error: Manga not found")
+          setManga(null)
         }
-      
-        useEffect(() => {
-          if (lastViewedId !== null && lastViewedId !== "") {
-            getMangaFromAPI();
-          }
-        }, [lastViewedId])
+      } catch (error) {
+        console.log(error);
+        setManga(null)
+        setError(error)
+      }
+    }
+    fetchData();
+  }
 
- 
+  useEffect(() => {
+    if (lastViewedId !== null && lastViewedId !== "") {
+      getMangaFromAPI();
+    }
+  }, [lastViewedId])
+
+
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false} className='p-4 mb-5'>
       <View className='flex flex-row px-4 justify-between mt-6 items-center'>
         <View className='flex flex-row gap-3 items-center'>
           <Link href={'/user'}>
@@ -166,40 +167,43 @@ const main = () => {
           </Link>
           <Text className='text-[20px]'>{accountName}</Text>
         </View>
-        <Ionicons name='settings-outline' size={30}/>
+        <Ionicons name='settings-outline' size={30} />
       </View>
-      <View className='flex-row items-center gap-2 border border-gray-300 rounded-lg px-4 py-3 mt-4 w-[80%] mx-auto'>
+      <View className='flex-row items-center gap-2 border border-gray-400 rounded-full px-4 py-3 mt-4 w-full mx-auto'>
         <TouchableOpacity onPress={handleSearch}>
           <Ionicons name='search-outline' size={24} color='black' />
         </TouchableOpacity>
         <TextInput placeholder='Search...' className='flex-1 ml-2 text-gray-700' onChangeText={setSearchQuery} value={searchQuery} />
-        </View>
-        <Text className='text-[20px] ml-4'>Trending Mangas</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {
-            mangas.map((manga: any, index: number) => (
-              <TouchableOpacity key={index} className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mr-4' onPress={() => { router.push(`/manga/${manga.id}`) }}>
-                <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
-                <View className='flex-col gap-1'>
-                  <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
-                  <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
-                </View>
-              </TouchableOpacity>
-            ))
-          }
-        </ScrollView>
-        <Text className='text-[20px] text-center mt-4'>Recently Viewed</Text>
+      </View>
+      <Text className='text-[20px] ml-4 mt-6'>Trending Mangas</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {
-          manga && (
-            <TouchableOpacity className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mx-auto' onPress={() => { router.push(`/manga/${manga.id}`) }}>
-                <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
-                <View className='flex-col gap-1'>
-                  <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
-                  <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
-                </View>
-              </TouchableOpacity>
-          )
+          mangas.map((manga: any, index: number) => (
+            <TouchableOpacity key={index} className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mr-4' onPress={() => { router.push(`/manga/${manga.id}`) }}>
+              <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
+              <View className='flex-col gap-1'>
+                <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
+              </View>
+            </TouchableOpacity>
+          ))
         }
+      </ScrollView>
+
+      {
+        manga && (
+          <View className='mb-5'>
+            <Text className='text-[20px] text-center mt-4'>Recently Viewed</Text>
+            <TouchableOpacity className='w-[200px] mt-4 flex-col gap-2 px-3 py-5 rounded-lg bg-white shadow-md mx-auto'  onPress={() => { router.push(`/manga/${lastViewedId}`) }}>
+              <Image source={{ uri: manga.coverImage.extraLarge }} className='h-64 rounded-lg' resizeMode='contain' />
+              <View className='flex-col gap-1'>
+                <Text className='font-bold text-xl w-[160px] truncate' numberOfLines={1}>{language === "English" ? manga.title.english : (manga.title.romaji ? manga.title.romaji : manga.title.native)}</Text>
+                <Text className={`text-sm text-gray-400 w-[160px] truncate ${!manga.title.romaji ? "hidden" : ""}`} numberOfLines={1}>{manga.title.native}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )
+      }
     </ScrollView>
   )
 }

@@ -36,7 +36,9 @@ const Manga = () => {
 
   const [favoriteId, setFavoriteId] = useState<any>(null)
   const [isFavorite, setIsFavorite] = useState(false)
-
+  const [currentStatus, setCurrentStatus] = useState<any>("")
+  const [statusId, setStatusId] = useState<any>(null)
+  // console.log(id);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -99,12 +101,13 @@ const Manga = () => {
 
   useEffect(() => {
     getMangaFromAPI()
+    checkStatus(accountId, manga?.id)
   }, [])
 
   const checkExistsUserData = async () => {
     if (userDatas && userDatas.length > 0) {
       // console.log(accountId);
-      const existing = userDatas.find(userData => userData.UserID?.toString().trim() === accountId?.toString().trim());
+      const existing = userDatas.find((userData: any) => userData.UserID?.toString().trim() === accountId?.toString().trim());
       if (existing) {
         return existing;
       } else return null;
@@ -166,9 +169,53 @@ const Manga = () => {
 
   // Status
 
+  const checkStatus = async (userId: string, mangaId: string) => {
+    // console.log(userId);
+    try {
+      const response = await database.listDocuments(
+        databaseId,
+        statusCollection,
+        [
+          Query.equal('UserID', userId)
+        ]
+      )
+      if (response.documents.length > 0) {
+        // console.log("yes");
+        setCurrentStatus(response.documents[0].Status)
+        setStatusId(response.documents[0].$id)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   const handleChangeMangaStatus = async (status: string) => {
-
+    if (statusId) {
+      try {
+        await database.updateDocument(databaseId, statusCollection, statusId, { Status: status })
+        setCurrentStatus(status)
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+      try {
+        const response = await database.createDocument(
+          databaseId,
+          statusCollection,
+          ID.unique(),
+          {
+            MangaID: id,
+            UserID: accountId,
+            Status: status
+          }
+        )
+        setCurrentStatus(status)
+        setStatusId(response.$id)
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
 
@@ -230,9 +277,9 @@ const Manga = () => {
 
 
   return (
-    <View className='p-4 flex-1 my-4'>
+    <View className='flex-1 my-4'>
       <Ionicons name='arrow-back' className='absolute top-3 left-3 z-10 bg-gray-100 rounded-full p-4' size={25} onPress={() => router.back()} />
-      <ScrollView className='z-100' showsVerticalScrollIndicator={false}>
+      <ScrollView className='z-100 p-4' showsVerticalScrollIndicator={false}>
         {/* <Text>{Number(id)}</Text> */}
 
         {error ? (<Text>{error}</Text>) : manga ?
@@ -246,7 +293,7 @@ const Manga = () => {
                 </TouchableOpacity>
               </View>
               <Text className='text-center text-gray-500 text-xl mt-3'>Manga Information</Text>
-              <View className='mb-6'>
+              <View>
                 <View className='py-4 px-6 shadow-slate-400 flex-row justify-between items-center w-full border border-gray-300 rounded-3xl'>
                   <View className='flex-col gap-1 border-r-gray-400 border-r pr-5'>
                     <Text className='text-center text-2xl'>{manga.averageScore} / 100</Text>
@@ -279,7 +326,7 @@ const Manga = () => {
           :
           (<Text className='text-center text-4xl text-gray-400 mt-12'>Loading...</Text>)}
       </ScrollView>
-      <TouchableOpacity className='w-full flex-row justify-between bg-[#a8b4fc] py-4 px-8 rounded-full items-center'>
+      <TouchableOpacity className='w-full flex-row justify-between bg-[#a8b4fc] py-4 px-8 rounded-full items-center absolute bottom-10'>
         <Text className='text-white text-xl'>Manga Status:</Text>
         <Dropdown
           data={status}
@@ -287,7 +334,7 @@ const Manga = () => {
           search={false}
           labelField="label"
           valueField="value"
-          value={status[0].value}
+          value={currentStatus}
           style={
             {
               width: 200,
