@@ -5,14 +5,11 @@ import { router } from 'expo-router'
 import { Avatars } from 'react-native-appwrite'
 import { client } from '@/backend/appwrite'
 import { Ionicons } from '@expo/vector-icons'
-import { Link } from 'expo-router'
 import { database, databaseId, userDataCollection } from '@/backend/appwrite'
 import { ID } from 'react-native-appwrite'
 import { Dropdown } from 'react-native-element-dropdown'
-import { useNavigation } from '@react-navigation/native'
 
 const user = () => {
-
 
   const languageOptions = [
     { label: 'English', value: 'English' },
@@ -32,7 +29,6 @@ const user = () => {
         setAccountEmail(user.email); 
         setAccountId(user.$id);
     };
-
     fetchAccount();
   }, []);
 
